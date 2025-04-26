@@ -8,11 +8,14 @@ import (
 )
 
 type Service interface {
-	GetDeployments(ctx context.Context, namespace string) ([]models.Deployment, error)
+	ListDeployments(ctx context.Context, namespace string) ([]models.Deployment, error)
+	CreateDeployment(ctx context.Context, dep models.Deployment) error
 }
 
 func New(k8sClient external.KubernetesClient) Service {
-	return &service{}
+	return &service{
+		domains.Deployments{K8sCl: k8sClient},
+	}
 }
 
 type service struct {

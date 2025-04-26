@@ -8,7 +8,7 @@ import (
 )
 
 func SetupRoutes(mux *http.ServeMux, h handler.Handler) {
-	handle(mux, "GET /deployments/:namespace", h.V1.GetDeployments)
+	handle(mux, "GET /deployments/{namespace}", h.V1.GetDeployments)
 	handle(mux, "POST /deployments/", h.V1.CreateDeployment)
 }
 
