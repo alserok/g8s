@@ -2,6 +2,7 @@ package app
 
 import (
 	"github.com/alserok/g8s/internal/config"
+	"github.com/alserok/g8s/internal/external/k8s"
 	"github.com/alserok/g8s/internal/server"
 	"github.com/alserok/g8s/internal/service"
 	"github.com/alserok/g8s/internal/utils/logger"
@@ -15,12 +16,17 @@ func MustServe(cfg *config.Config) {
 
 	log.Info("starting app")
 
+	log.Info("initializing clients")
+
+	k8sClient := k8s.NewClient(cfg.KubeConfigPath)
+	log.Info("k8s client initialized", logger.WithArg("kubeconfig_path", cfg.KubeConfigPath))
+
 	log.Info("initializing layers")
 
-	srvc := service.New()
+	srvc := service.New(k8sClient)
 	log.Info("service initialized")
 
-	srvr := server.New(server.HTTP, srvc)
+	srvr := server.New(server.HTTP, srvc, log)
 	log.Info("server initialized")
 
 	log.Info("app is serving", logger.WithArg("port", cfg.Port))

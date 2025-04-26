@@ -1,19 +1,20 @@
 package service
 
-import "context"
+import (
+	"context"
+	"github.com/alserok/g8s/internal/external"
+	"github.com/alserok/g8s/internal/service/domains"
+	"github.com/alserok/g8s/internal/service/models"
+)
 
 type Service interface {
-	GetPods(ctx context.Context)
+	GetDeployments(ctx context.Context, namespace string) ([]models.Deployment, error)
 }
 
-func New() Service {
+func New(k8sClient external.KubernetesClient) Service {
 	return &service{}
 }
 
 type service struct {
-}
-
-func (s service) GetPods(ctx context.Context) {
-	//TODO implement me
-	panic("implement me")
+	domains.Deployments
 }

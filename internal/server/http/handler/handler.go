@@ -7,13 +7,13 @@ import (
 
 func New(service service.Service) Handler {
 	return Handler{
-		v1.Handler{Service: service},
-		service,
+		V1:      v1.Handler{Service: service},
+		service: service,
 	}
 }
 
 type Handler struct {
-	v1.Handler
+	V1 v1.Handler
 
 	service service.Service
 }

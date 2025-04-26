@@ -9,11 +9,12 @@ import (
 	v1 "github.com/alserok/g8s/internal/server/http/middleware/v1"
 	"github.com/alserok/g8s/internal/server/http/router"
 	"github.com/alserok/g8s/internal/service"
+	"github.com/alserok/g8s/internal/utils/logger"
 	"net/http"
 	"time"
 )
 
-func New(srvc service.Service) *server {
+func New(srvc service.Service, log logger.Logger) *server {
 	mux := http.NewServeMux()
 	srvr := &http.Server{
 		Handler:      mux,
@@ -23,7 +24,7 @@ func New(srvc service.Service) *server {
 
 	router.SetupRoutes(mux, handler.New(srvc))
 
-	middleware.With(srvr.Handler, v1.WithRecovery)
+	middleware.With(srvr.Handler, v1.WithLogger(log), v1.WithRecovery)
 
 	return &server{
 		srvr: srvr,

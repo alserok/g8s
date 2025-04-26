@@ -10,6 +10,10 @@ type Handler struct {
 	Service service.Service
 }
 
-func (h *Handler) GetPods(w http.ResponseWriter, r *http.Request) error {
+func (h *Handler) GetDeployments(w http.ResponseWriter, r *http.Request) error {
+	return nil
+}
+
+func (h *Handler) CreateDeployment(w http.ResponseWriter, r *http.Request) error {
 	return nil
 }
