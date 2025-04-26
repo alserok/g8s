@@ -12,9 +12,9 @@ type Service interface {
 	CreateDeployment(ctx context.Context, dep models.Deployment) error
 }
 
-func New(k8sClient external.KubernetesClient) Service {
+func New(k8sClient external.KubernetesClient, aiClient external.AIClient) Service {
 	return &service{
-		domains.Deployments{K8sCl: k8sClient},
+		domains.Deployments{K8sCl: k8sClient, AIClient: aiClient},
 	}
 }
 

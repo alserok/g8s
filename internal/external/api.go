@@ -9,3 +9,7 @@ type KubernetesClient interface {
 	CreateDeployment(ctx context.Context, depl models.Deployment) error
 	ListDeployments(ctx context.Context, namespace string) ([]models.Deployment, error)
 }
+
+type AIClient interface {
+	Prompt(ctx context.Context, prompt string) (string, error)
+}

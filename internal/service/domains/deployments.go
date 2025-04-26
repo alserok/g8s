@@ -8,7 +8,8 @@ import (
 )
 
 type Deployments struct {
-	K8sCl external.KubernetesClient
+	K8sCl    external.KubernetesClient
+	AIClient external.AIClient
 }
 
 func (d Deployments) ListDeployments(ctx context.Context, namespace string) ([]models.Deployment, error) {
