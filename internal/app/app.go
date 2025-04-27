@@ -20,9 +20,9 @@ func MustServe(cfg *config.Config) {
 
 	log.Info("initializing clients")
 
-	k8sClient := k8s.NewClient(cfg.KubeConfigPath)
-	log.Info("k8s client initialized", logger.WithArg("kubeconfig_path", cfg.KubeConfigPath))
-	aiClient := ai.NewClient()
+	k8sClient := k8s.NewClient(cfg.K8s.KubeConfigPath)
+	log.Info("k8s client initialized", logger.WithArg("kubeconfig_path", cfg.K8s.KubeConfigPath))
+	aiClient := ai.NewClient(cfg.AI.ApiToken)
 	log.Info("ai client initialized")
 
 	log.Info("initializing metrics")
