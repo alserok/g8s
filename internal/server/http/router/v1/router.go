@@ -8,8 +8,10 @@ import (
 )
 
 func SetupRoutes(mux *http.ServeMux, h handler.Handler) {
-	handle(mux, "GET /deployments/{namespace}", h.V1.GetDeployments)
-	handle(mux, "POST /deployments/", h.V1.CreateDeployment)
+	handle(mux, "GET /list/{namespace}", h.V1.List)
+	handle(mux, "POST /create/", h.V1.Create)
+	handle(mux, "POST /delete/", h.V1.Delete)
+	handle(mux, "POST /update/", h.V1.Update)
 }
 
 func handle(mux *http.ServeMux, path string, handler func(w http.ResponseWriter, r *http.Request) error) http.HandlerFunc {
