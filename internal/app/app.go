@@ -15,6 +15,9 @@ import (
 
 func MustServe(cfg *config.Config) {
 	log := logger.New(logger.Slog, cfg.Env)
+	defer func() {
+		_ = log.Close()
+	}()
 
 	log.Info("starting app")
 
