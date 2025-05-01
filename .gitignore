@@ -2,3 +2,4 @@
 .env
 makefile
 *.txt
+docs

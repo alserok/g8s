@@ -63,8 +63,9 @@ func (s slog) Info(msg string, args ...arg) {
 	if len(args) == 0 {
 		s.log.Info(msg)
 		if s.file != nil {
-			s.chLogsBatch <- batchLog{
-				Msg: msg,
+			select {
+			case <-s.ctx.Done():
+			case s.chLogsBatch <- batchLog{Msg: msg}:
 			}
 		}
 	} else {
@@ -75,9 +76,9 @@ func (s slog) Info(msg string, args ...arg) {
 
 		s.log.Info(msg, slogArgs...)
 		if s.file != nil {
-			s.chLogsBatch <- batchLog{
-				Msg:  msg,
-				args: slogArgs,
+			select {
+			case <-s.ctx.Done():
+			case s.chLogsBatch <- batchLog{Msg: msg}:
 			}
 		}
 	}
@@ -87,8 +88,9 @@ func (s slog) Error(msg string, args ...arg) {
 	if len(args) == 0 {
 		s.log.Error(msg)
 		if s.file != nil {
-			s.chLogsBatch <- batchLog{
-				Msg: msg,
+			select {
+			case <-s.ctx.Done():
+			case s.chLogsBatch <- batchLog{Msg: msg}:
 			}
 		}
 	} else {
@@ -99,9 +101,9 @@ func (s slog) Error(msg string, args ...arg) {
 
 		s.log.Error(msg, slogArgs...)
 		if s.file != nil {
-			s.chLogsBatch <- batchLog{
-				Msg:  msg,
-				args: slogArgs,
+			select {
+			case <-s.ctx.Done():
+			case s.chLogsBatch <- batchLog{Msg: msg, args: slogArgs}:
 			}
 		}
 	}
@@ -111,8 +113,9 @@ func (s slog) Debug(msg string, args ...arg) {
 	if len(args) == 0 {
 		s.log.Debug(msg)
 		if s.file != nil {
-			s.chLogsBatch <- batchLog{
-				Msg: msg,
+			select {
+			case <-s.ctx.Done():
+			case s.chLogsBatch <- batchLog{Msg: msg}:
 			}
 		}
 	} else {
@@ -123,9 +126,9 @@ func (s slog) Debug(msg string, args ...arg) {
 
 		s.log.Debug(msg, slogArgs...)
 		if s.file != nil {
-			s.chLogsBatch <- batchLog{
-				Msg:  msg,
-				args: slogArgs,
+			select {
+			case <-s.ctx.Done():
+			case s.chLogsBatch <- batchLog{Msg: msg, args: slogArgs}:
 			}
 		}
 	}
@@ -135,8 +138,9 @@ func (s slog) Warn(msg string, args ...arg) {
 	if len(args) == 0 {
 		s.log.Warn(msg)
 		if s.file != nil {
-			s.chLogsBatch <- batchLog{
-				Msg: msg,
+			select {
+			case <-s.ctx.Done():
+			case s.chLogsBatch <- batchLog{Msg: msg}:
 			}
 		}
 	} else {
@@ -147,17 +151,20 @@ func (s slog) Warn(msg string, args ...arg) {
 
 		s.log.Warn(msg, slogArgs...)
 		if s.file != nil {
-			s.chLogsBatch <- batchLog{
-				Msg:  msg,
-				args: slogArgs,
+			select {
+			case <-s.ctx.Done():
+			case s.chLogsBatch <- batchLog{Msg: msg, args: slogArgs}:
 			}
 		}
 	}
 }
 
 func (s slog) Close() error {
-	close(s.chLogsBatch)
-	<-s.ctx.Done()
+	if s.file != nil {
+		close(s.chLogsBatch)
+		<-s.ctx.Done()
+	}
+
 	return nil
 }
 
