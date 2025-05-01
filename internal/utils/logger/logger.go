@@ -1,5 +1,7 @@
 package logger
 
+import "context"
+
 type Logger interface {
 	Info(msg string, args ...arg)
 	Error(msg string, args ...arg)
@@ -20,6 +22,20 @@ func New(t uint, env string) Logger {
 	default:
 		panic("invalid logger type")
 	}
+}
+
+type ctxLoggerKey string
+
+const (
+	ctxLogger ctxLoggerKey = "ctx_logger"
+)
+
+func WrapContext(ctx context.Context, log Logger) context.Context {
+	return context.WithValue(ctx, ctxLogger, log)
+}
+
+func ExtractContext(ctx context.Context) Logger {
+	return ctx.Value(ctxLogger).(Logger)
 }
 
 func WithArg(key string, val any) arg {
