@@ -1,5 +1,4 @@
 .idea
 .env
-makefile
 *.txt
 docs
