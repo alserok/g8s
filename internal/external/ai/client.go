@@ -66,8 +66,13 @@ func (c client) Prompt(ctx context.Context, prompt fmt.Stringer) (string, error)
 		return "", errors.New(fmt.Sprintf("api response status code is not equal to 200: received %d", res.StatusCode), errors.ErrInternal)
 	}
 
-	content := strings.ReplaceAll(resBody.Choices[0].Message.Content, "```", "")
-	content = strings.ReplaceAll(resBody.Choices[0].Message.Content, "yaml", "")
+	content := strings.Replace(resBody.Choices[0].Message.Content, "yaml", "", 1)
+	if content[:3] == "```" {
+		content = content[3:]
+	}
+	if content[len(content)-3:] == "```" {
+		content = content[:len(content)-3]
+	}
 
 	return content, nil
 }

@@ -82,11 +82,47 @@ func (s service) Create(ctx context.Context, req models.Create) error {
 }
 
 func (s service) Delete(ctx context.Context, req models.Delete) error {
-	//TODO implement me
-	panic("implement me")
+	if err := s.k8sClient.DeleteDeployment(ctx, req.Namespace, req.Name); err != nil {
+		return fmt.Errorf("failed to delete deployment: %w", err)
+	}
+
+	return nil
 }
 
 func (s service) Update(ctx context.Context, req models.Update) error {
-	//TODO implement me
-	panic("implement me")
+	schema, err := s.aiClient.Prompt(ctx, req)
+	if err != nil {
+		return fmt.Errorf("failed to prompt ai: %w", err)
+	}
+
+	switch req.Type {
+	case models.TypeDB:
+		schemas, err := helpers.ParseSchema(ctx, schema)
+		if err != nil {
+			return fmt.Errorf("failed to parse schema: %w", err)
+		}
+
+		if dep, ok := schemas[models.TypeDeployment]; ok {
+			if err = s.k8sClient.UpdateDeployment(ctx, dep.(models.Deployment)); err != nil {
+				return fmt.Errorf("failed to update deployment: %w", err)
+			}
+		}
+
+		if dep, ok := schemas[models.TypePersistentVolumeClaim]; ok {
+			if err = s.k8sClient.UpdatePersistentVolumeClaim(ctx, dep.(models.PersistentVolumeClaim)); err != nil {
+				return fmt.Errorf("failed to update persistent volume claim: %w", err)
+			}
+		}
+
+		if srvc, ok := schemas[models.TypeService]; ok {
+			if err = s.k8sClient.UpdateService(ctx, srvc.(models.Service)); err != nil {
+				return fmt.Errorf("failed to update persistent volume claim: %w", err)
+			}
+		}
+	case models.TypeService:
+	default:
+		return errors.New("unknown type", errors.ErrBadRequest)
+	}
+
+	return nil
 }

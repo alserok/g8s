@@ -20,9 +20,13 @@ func (c Create) String() string {
 }
 
 type Delete struct {
+	Namespace string `json:"namespace"`
+	Name      string `json:"name"`
 }
 
 type Update struct {
+	ID string `json:"id"`
+	Create
 }
 
 type List struct {
@@ -60,6 +64,7 @@ type Deployment struct {
 }
 
 type PersistentVolumeClaim struct {
+	Deployment Deployment `json:"deployment"`
 }
 
 type Service struct {

@@ -3,6 +3,7 @@ package helpers
 import (
 	"context"
 	"github.com/alserok/g8s/internal/utils/errors"
+	"github.com/alserok/g8s/internal/utils/logger"
 	"k8s.io/apimachinery/pkg/util/yaml"
 	"strings"
 
@@ -10,6 +11,10 @@ import (
 )
 
 func ParseSchema(ctx context.Context, schema string) (map[models.Type]any, error) {
+	log := logger.ExtractContext(ctx)
+
+	log.Debug("schema to parse", logger.WithArg("schema", schema))
+
 	parts := strings.Split(schema, "---")
 
 	res := make(map[models.Type]any)

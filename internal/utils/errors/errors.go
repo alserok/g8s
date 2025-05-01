@@ -36,7 +36,7 @@ const (
 	HTTP = iota
 )
 
-func Parse(t uint, err error) (string, string, uint) {
+func Parse(t uint, err error) (string, string, int) {
 	switch t {
 	case HTTP:
 		var e *customError

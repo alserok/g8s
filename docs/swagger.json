@@ -1,0 +1,103 @@
+{
+    "schemes": [
+        "http"
+    ],
+    "swagger": "2.0",
+    "info": {
+        "description": "g8s http api",
+        "title": "g8s API",
+        "contact": {},
+        "version": "0.0.1"
+    },
+    "host": "localhost:{{PORT}}",
+    "paths": {
+        "/v1/create": {
+            "post": {
+                "description": "creates entities",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "create"
+                ],
+                "summary": "Create",
+                "parameters": [
+                    {
+                        "description": "body",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.Create"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "type": "int"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "int"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "int"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "int"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "models.Create": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "image": {
+                    "type": "string"
+                },
+                "replicas": {
+                    "type": "integer"
+                },
+                "type": {
+                    "$ref": "#/definitions/models.Type"
+                }
+            }
+        },
+        "models.Type": {
+            "type": "integer",
+            "enum": [
+                0,
+                1,
+                2,
+                0,
+                1
+            ],
+            "x-enum-varnames": [
+                "TypeDeployment",
+                "TypePersistentVolumeClaim",
+                "TypeService",
+                "TypeDB",
+                "TypeApp"
+            ]
+        }
+    }
+}

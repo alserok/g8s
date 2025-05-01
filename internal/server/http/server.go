@@ -4,27 +4,29 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/alserok/g8s/internal/server/http/handler"
 	"github.com/alserok/g8s/internal/server/http/middleware"
 	v1 "github.com/alserok/g8s/internal/server/http/middleware/v1"
+	"net/http"
+	"time"
+
+	_ "github.com/swaggo/http-swagger"
+
+	"github.com/alserok/g8s/internal/server/http/handler"
 	"github.com/alserok/g8s/internal/server/http/router"
 	"github.com/alserok/g8s/internal/service"
 	"github.com/alserok/g8s/internal/utils/logger"
-	"net/http"
-	"time"
 )
 
 func New(srvc service.Service, log logger.Logger) *server {
 	mux := http.NewServeMux()
-	srvr := &http.Server{
-		Handler:      mux,
-		WriteTimeout: time.Second * 10,
-		ReadTimeout:  time.Second * 10,
-	}
 
 	router.SetupRoutes(mux, handler.New(srvc))
 
-	middleware.With(srvr.Handler, v1.WithLogger(log), v1.WithRecovery)
+	srvr := &http.Server{
+		Handler:      middleware.With(mux, v1.WithRecovery, v1.WithLogger(log)),
+		WriteTimeout: time.Second * 30,
+		ReadTimeout:  time.Second * 15,
+	}
 
 	return &server{
 		srvr: srvr,

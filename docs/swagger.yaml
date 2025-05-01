@@ -1,0 +1,70 @@
+definitions:
+  models.Create:
+    properties:
+      description:
+        type: string
+      image:
+        type: string
+      replicas:
+        type: integer
+      type:
+        $ref: '#/definitions/models.Type'
+    type: object
+  models.Type:
+    enum:
+    - 0
+    - 1
+    - 2
+    - 0
+    - 1
+    type: integer
+    x-enum-varnames:
+    - TypeDeployment
+    - TypePersistentVolumeClaim
+    - TypeService
+    - TypeDB
+    - TypeApp
+host: localhost:{{PORT}}
+info:
+  contact: {}
+  description: g8s http api
+  title: g8s API
+  version: 0.0.1
+paths:
+  /v1/create:
+    post:
+      consumes:
+      - application/json
+      description: creates entities
+      parameters:
+      - description: body
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/models.Create'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            type: int
+        "400":
+          description: Bad Request
+          schema:
+            type: int
+        "404":
+          description: Not Found
+          schema:
+            type: int
+        "500":
+          description: Internal Server Error
+          schema:
+            type: int
+      summary: Create
+      tags:
+      - create
+schemes:
+- http
+swagger: "2.0"
