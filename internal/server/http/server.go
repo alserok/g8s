@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"github.com/alserok/g8s/internal/cache"
 	"net/http"
 	"time"
 
@@ -18,10 +19,10 @@ import (
 	"github.com/alserok/g8s/internal/utils/logger"
 )
 
-func New(srvc service.Service, log logger.Logger) *server {
+func New(srvc service.Service, cache cache.Repository, log logger.Logger) *server {
 	mux := http.NewServeMux()
 
-	router.SetupRoutes(mux, handler.New(srvc))
+	router.SetupRoutes(mux, handler.New(srvc), cache)
 
 	srvr := &http.Server{
 		Handler:      middleware.With(mux, v1.WithHeaders, v1.WithRecovery, v1.WithLogger(log)),

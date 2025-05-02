@@ -1,6 +1,11 @@
 package app
 
 import (
+	"github.com/alserok/g8s/internal/cache/memcached"
+	"os"
+	"os/signal"
+	"syscall"
+
 	"github.com/alserok/g8s/internal/config"
 	"github.com/alserok/g8s/internal/external/ai"
 	"github.com/alserok/g8s/internal/external/k8s"
@@ -8,9 +13,6 @@ import (
 	"github.com/alserok/g8s/internal/server"
 	"github.com/alserok/g8s/internal/service"
 	"github.com/alserok/g8s/internal/utils/logger"
-	"os"
-	"os/signal"
-	"syscall"
 )
 
 func MustServe(cfg *config.Config) {
@@ -23,8 +25,8 @@ func MustServe(cfg *config.Config) {
 
 	log.Info("initializing clients ☄️")
 
-	k8sClient := k8s.NewClient(cfg.K8s.KubeConfigPath)
-	log.Info("k8s client initialized 🛸", logger.WithArg("kubeconfig_path", cfg.K8s.KubeConfigPath))
+	k8sClient := k8s.NewClient()
+	log.Info("k8s client initialized 🛸")
 	aiClient := ai.NewClient(cfg.AI.ApiToken)
 	log.Info("ai client initialized 👽")
 
@@ -37,7 +39,14 @@ func MustServe(cfg *config.Config) {
 	srvc := service.New(k8sClient, aiClient, metr)
 	log.Info("service initialized 🧬")
 
-	srvr := server.New(server.HTTP, srvc, metr, log)
+	log.Info("initializing cache 👾")
+	c := memcached.New(cfg.Cache.Addr, cfg.Cache.TTL)
+	defer func() {
+		_ = c.Close()
+	}()
+	log.Info("cache initialized 🙂")
+
+	srvr := server.New(server.HTTP, srvc, metr, c, log)
 	log.Info("server initialized 🧪")
 
 	log.Info("app is serving ⚗️", logger.WithArg("port", cfg.Port))

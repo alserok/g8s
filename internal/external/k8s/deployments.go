@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/alserok/g8s/internal/service/models"
 	"github.com/alserok/g8s/internal/utils/errors"
+	"github.com/alserok/g8s/internal/utils/logger"
 	appsv1 "k8s.io/api/apps/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
@@ -28,6 +29,10 @@ func (c *client) CreateDeployment(ctx context.Context, dep models.Deployment) er
 }
 
 func (c *client) ListDeployments(ctx context.Context, namespace string) ([]models.Deployment, error) {
+	log := logger.ExtractContext(ctx)
+
+	log.Debug("listing deployments", logger.WithArg("namespace", namespace))
+
 	cl := c.cl.AppsV1().Deployments(namespace)
 
 	list, err := cl.List(ctx, metav1.ListOptions{})
@@ -44,6 +49,8 @@ func (c *client) ListDeployments(ctx context.Context, namespace string) ([]model
 			Template:   models.Template{},
 		})
 	}
+
+	log.Debug("deployments list", logger.WithArg("namespace", namespace), logger.WithArg("deployments", deps))
 
 	return deps, nil
 }

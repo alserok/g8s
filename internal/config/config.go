@@ -3,18 +3,20 @@ package config
 import (
 	_ "github.com/joho/godotenv/autoload"
 	"os"
+	"time"
 )
 
 type Config struct {
 	Env  string
 	Port string
 
-	K8s struct {
-		KubeConfigPath string `json:"kube_config"`
-	}
-
 	AI struct {
 		ApiToken string `json:"api_token"`
+	}
+
+	Cache struct {
+		Addr string        `json:"host"`
+		TTL  time.Duration `json:"ttl"`
 	}
 }
 
@@ -24,9 +26,15 @@ func MustLoad() *Config {
 	cfg.Env = os.Getenv("ENV")
 	cfg.Port = os.Getenv("PORT")
 
-	cfg.K8s.KubeConfigPath = os.Getenv("KUBECONFIG_PATH")
-
 	cfg.AI.ApiToken = os.Getenv("AI_API_TOKEN")
+
+	cfg.Cache.Addr = os.Getenv("CACHE_ADDR")
+	ttl, err := time.ParseDuration(os.Getenv("CACHE_TTL"))
+	if err == nil {
+		cfg.Cache.TTL = ttl
+	} else {
+		cfg.Cache.TTL = time.Hour * 24
+	}
 
 	return &cfg
 }

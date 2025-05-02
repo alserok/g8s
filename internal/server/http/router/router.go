@@ -1,6 +1,7 @@
 package router
 
 import (
+	"github.com/alserok/g8s/internal/cache"
 	"net/http"
 
 	_ "github.com/alserok/g8s/docs"
@@ -9,10 +10,10 @@ import (
 	httpSwagger "github.com/swaggo/http-swagger"
 )
 
-func SetupRoutes(mux *http.ServeMux, handler handler.Handler) {
+func SetupRoutes(mux *http.ServeMux, handler handler.Handler, cache cache.Repository) {
 	mux.Handle("/swagger/", httpSwagger.Handler(
 		httpSwagger.URL("/swagger/doc.json"),
 	))
 
-	v1.SetupRoutes(mux, handler)
+	v1.SetupRoutes(mux, handler, cache)
 }
