@@ -8,7 +8,6 @@ import (
 // @title           g8s API
 // @version         0.0.1
 // @description     g8s http api
-// @host            localhost:{{PORT}}
 // @schemes         http
 func main() {
 	app.MustServe(config.MustLoad())

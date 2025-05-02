@@ -3,10 +3,8 @@ package v1
 import (
 	"encoding/json"
 	"fmt"
-	"net/http"
-	"strconv"
-
 	_ "github.com/swaggo/http-swagger"
+	"net/http"
 
 	"github.com/alserok/g8s/internal/service"
 	"github.com/alserok/g8s/internal/service/models"
@@ -17,16 +15,28 @@ type Handler struct {
 	Service service.Service
 }
 
+// List godoc
+// @Summary      List
+// @Description  lists entities
+// @Tags         v1
+// @Accept       json
+// @Produce      json
+// @Param        namespace   path      string  true  "namespace"
+// @Success      200  {int}  0
+// @Failure      400  {int}  0
+// @Failure      404  {int}  0
+// @Failure      500  {int}  0
+// @Router       /v1/list/{namespace} [get]
 func (h *Handler) List(w http.ResponseWriter, r *http.Request) error {
 	var req models.List
 
 	req.Namespace = r.PathValue("namespace")
 
-	t, err := strconv.Atoi(r.PathValue(""))
-	if err != nil {
-		return errors.New(err.Error(), errors.ErrBadRequest)
-	}
-	req.Type = models.Type(t)
+	//t, err := strconv.Atoi(r.PathValue(""))
+	//if err != nil {
+	//	return errors.New(err.Error(), errors.ErrBadRequest)
+	//}
+	//req.Type = models.Type(t)
 
 	deps, err := h.Service.List(r.Context(), req)
 	if err != nil {
@@ -41,7 +51,7 @@ func (h *Handler) List(w http.ResponseWriter, r *http.Request) error {
 // Create godoc
 // @Summary      Create
 // @Description  creates entities
-// @Tags         create
+// @Tags         v1
 // @Accept       json
 // @Produce      json
 // @Param        input   body      models.Create  true  "body"
@@ -65,6 +75,18 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) error {
 	return nil
 }
 
+// Delete godoc
+// @Summary      Delete
+// @Description  deletes entities
+// @Tags         v1
+// @Accept       json
+// @Produce      json
+// @Param        input   body      models.Delete  true  "body"
+// @Success      200  {int}  0
+// @Failure      400  {int}  0
+// @Failure      404  {int}  0
+// @Failure      500  {int}  0
+// @Router       /v1/delete [delete]
 func (h *Handler) Delete(w http.ResponseWriter, r *http.Request) error {
 	var req models.Delete
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
@@ -78,6 +100,18 @@ func (h *Handler) Delete(w http.ResponseWriter, r *http.Request) error {
 	return nil
 }
 
+// Update godoc
+// @Summary      Update
+// @Description  updates entities
+// @Tags         v1
+// @Accept       json
+// @Produce      json
+// @Param        input   body      models.Update  true  "body"
+// @Success      200  {int}  0
+// @Failure      400  {int}  0
+// @Failure      404  {int}  0
+// @Failure      500  {int}  0
+// @Router       /v1/update [put]
 func (h *Handler) Update(w http.ResponseWriter, r *http.Request) error {
 	var req models.Update
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {

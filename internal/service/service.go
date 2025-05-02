@@ -34,7 +34,7 @@ func (s service) List(ctx context.Context, req models.List) (any, error) {
 	case models.TypeDeployment:
 		deps, err := s.k8sClient.ListDeployments(ctx, req.Namespace)
 		if err != nil {
-			return nil, fmt.Errorf("faild to list deployments: %w", err)
+			return nil, fmt.Errorf("failed to list deployments: %w", err)
 		}
 
 		return deps, err
